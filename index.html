@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <script type="text/javascript">
+
+
+        (function () {
+            var produtos = [];
+            var compras = [];
+            var vendas = [];
+
+            function criarProduto(codigoDoProduto, nomeDoProduto, precoDoProduto, estoqueDoProduto) {
+                return {codigo: codigoDoProduto, nome: nomeDoProduto, preco: precoDoProduto, estoque: estoqueDoProduto};
+            }
+
+            function cadastrarProduto() {
+                var codigo = prompt("Informe o código: ");
+                var nome = prompt("Informe o nome: ");
+                var preco = prompt("Informe o Preco: ");
+                var estoque = prompt("Informe o Estoque: ");
+                var novoProduto = criarProduto(codigo, nome, preco, estoque);
+                produtos.push(novoProduto);
+                apresentarMenu();
+            }
+
+
+            function criarCompra(codigoDoProduto, quantidade) {
+                return {codigo: codigoDoProduto, quantidade: quantidade};
+            }
+
+            function cadastrarCompra() {
+                var codigo = prompt("Informe o Codigo: ");
+                var quantidade = prompt("Informe a quantidade: ");
+                var produtoLocalizado = false;
+
+                for (var i = 0; i < produtos.length; i++) {
+                    if (produtos[i].codigo === codigo) {
+                        produtoLocalizado = true;
+                        if (quantidade > 0) {
+                            produtos[i].estoque = parseInt(produtos[i].estoque) + parseInt(quantidade);
+                            var novaCompra = criarCompra(codigo, quantidade);
+                            compras.push(novaCompra);
+                        } else {
+                            prompt("Informe uma quantidade maior que zero!");
+                        }
+                    }
+                }
+                if (!produtoLocalizado) {
+                    prompt("Produto nao localizado!");
+                }
+                apresentarMenu();
+            }
+
+
+
+            function criarVenda(codigoDoProduto, quantidade) {
+                return {codigo: codigoDoProduto, quantidade: quantidade};
+            }
+
+            function cadastrarVenda() {
+                var codigo = prompt("Informe o código do produto: ");
+
+                for (var i = 0; i < produtos.length; i++) {
+                    if (produtos[i].codigo === codigo) {
+                        var quantidade = prompt("Informe a quantidade: ");
+                        
+                        if (quantidade <= 0) {
+                            prompt("Informe uma quantidade maior que zero!");
+                        } else if (quantidade > produtos[i].estoque) {
+                            alert("A quantia informada (" + quantidade + ") é maior que a disponível (" + produtos[i].estoque + ").");                            
+                        } else {
+                            produtos[i].estoque = parseInt(produtos[i].estoque) - parseInt(quantidade);
+                            var novaVenda = criarVenda(codigo, quantidade);
+                            vendas.push(novaVenda);
+                        }
+                    } else {
+                        alert("Produto não localizado!");
+                        apresentarMenu();
+                    }
+                }
+                
+                apresentarMenu();
+            }
+
+
+
+            function gerarRelatorio(tipoDoRelatorio) {
+                if (opcaoAtual === 1) {
+                    tipoDoRelatorio = produtos;
+                } else if (opcaoAtual === 2) {
+                    tipoDoRelatorio = compras;
+                } else if (opcaoAtual === 3) {
+                    tipoDoRelatorio = vendas;
+                }
+
+                console.log(JSON.stringify(tipoDoRelatorio, null, 2));
+                apresentarMenuRelatorio();
+            }
+
+            function apresentarMenuRelatorio() {
+                var opcao = parseInt(prompt("1. Produtos\n2. Compras\n3. Vendas\n0. Sair"));
+
+                gerarRelatorio(opcao);
+            }
+
+
+            function apresentarMenu() {
+                var opcao = parseInt(prompt("1. Cadastrar produto\n2. Realizar compra\n3. Realizar venda\n4. Gerar relatório\n0. Sair"));
+
+                switch (opcao) {
+                    case 1:
+                        cadastrarProduto();
+                        break;
+                    case 2:
+                        cadastrarCompra();
+                        break;
+                    case 3:
+                        cadastrarVenda();
+                        break;
+                    case 4:
+                        apresentarMenuRelatorio();
+                        break;
+                    case 0:
+                        alert("Bye!");
+                        break;
+                    default:
+                        alert("Opção inválida!");
+                        apresentarMenu();
+                }
+
+            }
+
+            apresentarMenu();
+
+        })();
+
+    </script>
+
+    <body>
+    </body>
+
+</html>
